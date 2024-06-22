@@ -11,7 +11,7 @@
             text-align: center;
             margin: 0;
             padding: 0;
-            transition: background-image 0.3s ease;
+            transition: background-image 0.3s ease, background-video 0.3s ease;
             background-size: cover;
             background-position: center;
         }
@@ -83,6 +83,47 @@
             border: 1px solid #ccc;
             width: 50%;
         }
+
+        .advertisement {
+            margin-top: 50px;
+        }
+
+        .advertisement-item {
+            background-color: #ffffff;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 10px;
+            cursor: pointer;
+            transition: transform 0.3s, background-color 0.3s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .advertisement-item:hover {
+            background-color: #e9ecef;
+            transform: translateY(-10px);
+        }
+
+        .advertisement-title {
+            font-size: 1.2em;
+            color: #495057;
+        }
+
+        .advertisement-description {
+            font-size: 1em;
+            color: #6c757d;
+        }
+
+        .background-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -90,6 +131,7 @@
         <h1 class="animated-text">Furki Shop</h1>
     </div>
 
+    <!-- Admin Login Section -->
     <div class="admin-login">
         <form id="adminForm">
             <label for="admin_password">Admin Girişi:</label>
@@ -98,51 +140,112 @@
         </form>
     </div>
 
+    <!-- Product Display Section -->
     <div class="products">
         <div class="product" onclick="sendToTelegram('Instagram 2m erişimli fake kız hesabına tüm reklamlar girilir günlük 1.500₺')">
             <div class="product-title">Instagram 2m Erişimli Fake Kız Hesabı</div>
-            <div class="product-price"> Reklam ücreti.Günlük 1.500₺</div>
+            <div class="product-price">Reklam.Günlük 1.500₺</div>
         </div>
         <div class="product" onclick="sendToTelegram('Telegram +40k ifşa kitlesine tüm reklamlar gidilir günlük 1.000₺')">
             <div class="product-title">Telegram +40k İfşa Kitlesi</div>
-            <div class="product-price">Günlük 1.000₺</div>
+            <div class="product-price">Reklam.Günlük 1.000₺</div>
         </div>
     </div>
 
+    <!-- Advertisement Section -->
+    <div class="advertisement">
+        <h2>Reklamlar</h2>
+        <div class="advertisement-item" onclick="updateAdvertisement('Telegram Kanalı', 'https://t.me/m3rtw2', '', 'Furki Shop Telegram kanalı reklamı.')">
+            <div class="advertisement-title">Telegram Kanalı Reklamı</div>
+            <div class="advertisement-description">Furki Shop Telegram kanalı reklamı.</div>
+        </div>
+        <div class="advertisement-item" onclick="updateAdvertisement('Ürün', '', 'https://example.com/product.jpg', 'Furki Shop özel ürün reklamı.')">
+            <div class="advertisement-title">Ürün Reklamı</div>
+            <div class="advertisement-description">Furki Shop özel ürün reklamı.</div>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
     <div class="footer">
         <div class="telegram-info">Bu sitenin resmi Telegram hesabı: <a href="https://t.me/m3rtw2" target="_blank">@m3rtw2</a></div>
     </div>
 
+    <!-- Admin Section -->
     <div class="admin-section" id="adminSection" style="display: none;">
-        <h2>Arka Plan Resmini Güncelle</h2>
-        <input type="file" id="background_image" accept="image/*">
-        <button onclick="updateBackgroundImage()">Güncelle</button>
+        <h2>Arka Plan ve Reklam Yönetimi</h2>
+        <!-- Background Image or Video Upload -->
+        <label for="background_upload">Arka Plan Resmi veya Video:</label>
+        <input type="file" id="background_upload" accept="image/*,video/*"><br><br>
+        <button onclick="updateBackground()">Güncelle</button><br><br>
+
+        <!-- Music Upload -->
+        <label for="music_upload">Arka Plan Müziği:</label>
+        <input type="file" id="music_upload" accept="audio/*"><br><br>
+        <button onclick="updateMusic()">Güncelle</button><br><br>
+
+        <!-- Advertisement Update -->
+        <h2>Reklam Bilgilerini Güncelle</h2>
+        <label for="advertisement_type">Reklam Türü:</label>
+        <select id="advertisement_type">
+            <option value="Telegram Kanalı">Telegram Kanalı</option>
+            <option value="Ürün">Ürün</option>
+        </select><br><br>
+        <label for="advertisement_link">Reklam Linki:</label>
+        <input type="text" id="advertisement_link" placeholder="https://t.me/kanaladi"><br><br>
+        <label for="advertisement_image">Ürün Fotoğrafı:</label>
+        <input type="file" id="advertisement_image" accept="image/*"><br><br>
+        <label for="advertisement_description">Açıklama:</label><br>
+        <textarea id="advertisement_description" rows="4" cols="50" placeholder="Reklam açıklaması..."></textarea><br><br>
+        <button onclick="saveAdvertisement()">Kaydet</button>
     </div>
+
+    <!-- Background Video Element -->
+    <video id="background_video" class="background-video" autoplay muted loop></video>
 
     <script>
         document.getElementById('adminForm').addEventListener('submit', function(event) {
             event.preventDefault();
             const password = document.getElementById('admin_password').value;
-            if (password === 'furki') {
+            if (password === 'Furki00991122') {
                 document.getElementById('adminSection').style.display = 'block';
             }
         });
 
-        function sendToTelegram(message) {
-            const telegramUser = '@m3rtw2';
-            const telegramUrl = `https://t.me/${telegramUser}?text=${encodeURIComponent(message)}`;
-            window.open(telegramUrl, '_blank');
-        }
-
-        function updateBackgroundImage() {
-            const fileInput = document.getElementById('background_image');
+        function updateBackground() {
+            const fileInput = document.getElementById('background_upload');
             const file = fileInput.files[0];
             const reader = new FileReader();
 
             reader.onloadend = function () {
-                const base64String = reader.result;
-                localStorage.setItem('background_image', base64String);
-                document.body.style.backgroundImage = `url(${base64String})`;
+                const result = reader.result;
+                if (file.type.startsWith('image/')) {
+                    document.body.style.backgroundImage = `url(${result})`;
+                    localStorage.setItem('background_image', result);
+                    localStorage.removeItem('background_video');
+                    document.getElementById('background_video').style.display = 'none';
+                } else if (file.type.startsWith('video/')) {
+                    const video = document.getElementById('background_video');
+                    video.src = result;
+                    video.style.display = 'block';
+                    localStorage.setItem('background_video', result);
+                    localStorage.removeItem('background_image');
+                }
+            };if (file) {
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function updateMusic() {
+            const fileInput = document.getElementById('music_upload');
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            reader.onloadend = function () {
+                const result = reader.result;
+                const audio = new Audio(result);
+                audio.loop = true;
+                audio.play();
+                localStorage.setItem('background_music', result);
             };
 
             if (file) {
@@ -150,12 +253,110 @@
             }
         }
 
+        function updateAdvertisement(type, link, image, description) {
+            document.getElementById('advertisement_type').value = type;
+            document.getElementById('advertisement_link').value = link;
+            document.getElementById('advertisement_description').value = description;
+
+            if (image) {
+                const fileInput = document.getElementById('advertisement_image');
+                fileInput.value = ''; // Reset the file input
+            }
+        }
+
+        function saveAdvertisement() {
+            const type = document.getElementById('advertisement_type').value;
+            const link = document.getElementById('advertisement_link').value;
+            const description = document.getElementById('advertisement_description').value;
+            const fileInput = document.getElementById('advertisement_image');
+            const file = fileInput.files[0];
+
+            const advertisement = { type, link, description };
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onloadend = function () {
+                    advertisement.image = reader.result;
+                    saveToLocalStorage(advertisement);
+                    displayAdvertisements();
+                };
+                reader.readAsDataURL(file);
+            } else {
+                saveToLocalStorage(advertisement);
+                displayAdvertisements();
+            }
+        }
+
+        function saveToLocalStorage(advertisement) {
+            const advertisements = JSON.parse(localStorage.getItem('advertisements')) || [];
+            advertisements.push(advertisement);
+            localStorage.setItem('advertisements', JSON.stringify(advertisements));
+        }
+
+        function displayAdvertisements() {
+            const advertisementContainer = document.querySelector('.advertisement');
+            advertisementContainer.innerHTML = '<h2>Reklamlar</h2>'; // Clear previous advertisements
+
+            const advertisements = JSON.parse(localStorage.getItem('advertisements')) || [];
+            advertisements.forEach(ad => {
+                const adItem = document.createElement('div');
+                adItem.className = 'advertisement-item';
+                adItem.onclick = function () {
+                    if (ad.link) window.open(ad.link, '_blank');
+                };
+
+                const adTitle = document.createElement('div');
+                adTitle.className = 'advertisement-title';
+                adTitle.textContent = ad.type + ' Reklamı';
+                adItem.appendChild(adTitle);
+
+                const adDescription = document.createElement('div');
+                adDescription.className = 'advertisement-description';
+                adDescription.textContent = ad.description;
+                adItem.appendChild(adDescription);
+
+                if (ad.image) {
+                    const adImage = document.createElement('img');
+                    adImage.src = ad.image;
+                    adImage.style.maxWidth = '100%';
+                    adImage.style.marginTop = '10px';
+                    adItem.appendChild(adImage);
+                }
+
+                advertisementContainer.appendChild(adItem);
+            });
+        }
+
+        // On window load, apply the saved settings
         window.onload = function() {
             const savedImage = localStorage.getItem('background_image');
             if (savedImage) {
                 document.body.style.backgroundImage = `url(${savedImage})`;
+                document.getElementById('background_video').style.display = 'none';
             }
+
+            const savedVideo = localStorage.getItem('background_video');
+            if (savedVideo) {
+                const video = document.getElementById('background_video');
+                video.src = savedVideo;
+                video.style.display = 'block';
+            }
+
+            const savedMusic = localStorage.getItem('background_music');
+            if (savedMusic) {
+                const audio = new Audio(savedMusic);
+                audio.loop = true;
+                audio.play();
+            }
+
+            displayAdvertisements();
         };
+
+        function sendToTelegram(message) {
+            const telegramUser = '@m3rtw2';
+            const telegramUrl = `https://t.me/${telegramUser}?text=${encodeURIComponent(message)}`;
+            window.open(telegramUrl, '_blank');
+        }
     </script>
 </body>
-</html>
+    </html>
