@@ -144,25 +144,17 @@
     <div class="products">
         <div class="product" onclick="sendToTelegram('Instagram 2m erişimli fake kız hesabına tüm reklamlar girilir günlük 1.500₺')">
             <div class="product-title">Instagram 2m Erişimli Fake Kız Hesabı</div>
-            <div class="product-price">Reklam.Günlük 1.500₺</div>
+            <div class="product-price">Günlük 1.500₺</div>
         </div>
         <div class="product" onclick="sendToTelegram('Telegram +40k ifşa kitlesine tüm reklamlar gidilir günlük 1.000₺')">
             <div class="product-title">Telegram +40k İfşa Kitlesi</div>
-            <div class="product-price">Reklam.Günlük 1.000₺</div>
+            <div class="product-price">Günlük 1.000₺</div>
         </div>
     </div>
 
     <!-- Advertisement Section -->
     <div class="advertisement">
         <h2>Reklamlar</h2>
-        <div class="advertisement-item" onclick="updateAdvertisement('Telegram Kanalı', 'https://t.me/m3rtw2', '', 'Furki Shop Telegram kanalı reklamı.')">
-            <div class="advertisement-title">Telegram Kanalı Reklamı</div>
-            <div class="advertisement-description">Furki Shop Telegram kanalı reklamı.</div>
-        </div>
-        <div class="advertisement-item" onclick="updateAdvertisement('Ürün', '', 'https://example.com/product.jpg', 'Furki Shop özel ürün reklamı.')">
-            <div class="advertisement-title">Ürün Reklamı</div>
-            <div class="advertisement-description">Furki Shop özel ürün reklamı.</div>
-        </div>
     </div>
 
     <!-- Footer Section -->
@@ -203,6 +195,14 @@
     <video id="background_video" class="background-video" autoplay muted loop></video>
 
     <script>
+        const db = {
+            settings: {
+                background: '',
+                music: ''
+            },
+            advertisements: []
+        };
+
         document.getElementById('adminForm').addEventListener('submit', function(event) {
             event.preventDefault();
             const password = document.getElementById('admin_password').value;
@@ -220,17 +220,21 @@
                 const result = reader.result;
                 if (file.type.startsWith('image/')) {
                     document.body.style.backgroundImage = `url(${result})`;
-                    localStorage.setItem('background_image', result);
-                    localStorage.removeItem('background_video');
+                    db.settings.background = result;
+                    db.settings.backgroundType = 'image';
+                    localStorage.setItem('db', JSON.stringify(db));
                     document.getElementById('background_video').style.display = 'none';
                 } else if (file.type.startsWith('video/')) {
                     const video = document.getElementById('background_video');
                     video.src = result;
                     video.style.display = 'block';
-                    localStorage.setItem('background_video', result);
-                    localStorage.removeItem('background_image');
+                    db.settings.background = result;
+                    db.settings.backgroundType = 'video';
+                    localStorage.setItem('db', JSON.stringify(db));
                 }
-            };if (file) {
+            };
+
+            if (file) {
                 reader.readAsDataURL(file);
             }
         }
@@ -245,26 +249,15 @@
                 const audio = new Audio(result);
                 audio.loop = true;
                 audio.play();
-                localStorage.setItem('background_music', result);
-            };
+                db.settings.music = result;
+                localStorage.setItem('db', JSON.stringify(db));};
 
             if (file) {
                 reader.readAsDataURL(file);
             }
         }
 
-        function updateAdvertisement(type, link, image, description) {
-            document.getElementById('advertisement_type').value = type;
-            document.getElementById('advertisement_link').value = link;
-            document.getElementById('advertisement_description').value = description;
-
-            if (image) {
-                const fileInput = document.getElementById('advertisement_image');
-                fileInput.value = ''; // Reset the file input
-            }
-        }
-
-        function saveAdvertisement() {
+        function updateAdvertisement() {
             const type = document.getElementById('advertisement_type').value;
             const link = document.getElementById('advertisement_link').value;
             const description = document.getElementById('advertisement_description').value;
@@ -288,16 +281,15 @@
         }
 
         function saveToLocalStorage(advertisement) {
-            const advertisements = JSON.parse(localStorage.getItem('advertisements')) || [];
-            advertisements.push(advertisement);
-            localStorage.setItem('advertisements', JSON.stringify(advertisements));
+            db.advertisements.push(advertisement);
+            localStorage.setItem('db', JSON.stringify(db));
         }
 
         function displayAdvertisements() {
             const advertisementContainer = document.querySelector('.advertisement');
             advertisementContainer.innerHTML = '<h2>Reklamlar</h2>'; // Clear previous advertisements
 
-            const advertisements = JSON.parse(localStorage.getItem('advertisements')) || [];
+            const advertisements = db.advertisements;
             advertisements.forEach(ad => {
                 const adItem = document.createElement('div');
                 adItem.className = 'advertisement-item';
@@ -327,29 +319,120 @@
             });
         }
 
-        // On window load, apply the saved settings
         window.onload = function() {
-            const savedImage = localStorage.getItem('background_image');
-            if (savedImage) {
-                document.body.style.backgroundImage = `url(${savedImage})`;
-                document.getElementById('background_video').style.display = 'none';
-            }
+            const savedDb = localStorage.getItem('db');
+            if (savedDb) {
+                Object.assign(db, JSON.parse(savedDb));
 
-            const savedVideo = localStorage.getItem('background_video');
-            if (savedVideo) {
-                const video = document.getElementById('background_video');
-                video.src = savedVideo;
-                video.style.display = 'block';
-            }
+                if (db.settings.backgroundType === 'image') {
+                    document.body.style.backgroundImage = `url(${db.settings.background})`;
+                    document.getElementById('background_video').style.display = 'none';
+                } else if (db.settings.backgroundType === 'video') {
+                    const video = document.getElementById('background_video');
+                    video.src = db.settings.background;
+                    video.style.display = 'block';
+                }
 
-            const savedMusic = localStorage.getItem('background_music');
-            if (savedMusic) {
-                const audio = new Audio(savedMusic);
-                audio.loop = true;
-                audio.play();
-            }
+                if (db.settings.music) {
+                    const audio = new Audio(db.settings.music);
+                    audio.loop = true;
+                    audio.play();
+                }
 
-            displayAdvertisements();
+                displayAdvertisements();
+            }
+        };
+
+        function sendToTelegram(message) {
+            const telegramUser = '@m3rtw2';
+            const telegramUrl = `https://t- `updateAdvertisement` fonksiyonu, formdan alınan verileri okuyup bir reklam nesnesi oluşturur ve `db` nesnesine ekler.
+            - `saveToLocalStorage` fonksiyonu, `db` nesnesini `localStorage`'a yazar.
+            - `displayAdvertisements` fonksiyonu, `db` nesnesindeki reklamları sayfada görüntüler.
+
+        function updateAdvertisement() {
+            const type = document.getElementById('advertisement_type').value;
+            const link = document.getElementById('advertisement_link').value;
+            const description = document.getElementById('advertisement_description').value;
+            const fileInput = document.getElementById('advertisement_image');
+            const file = fileInput.files[0];
+
+            const advertisement = { type, link, description };
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onloadend = function () {
+                    advertisement.image = reader.result;
+                    saveToLocalStorage(advertisement);
+                    displayAdvertisements();
+                };
+                reader.readAsDataURL(file);
+            } else {
+                saveToLocalStorage(advertisement);
+                displayAdvertisements();
+            }
+        }
+
+        function saveToLocalStorage(advertisement) {
+            db.advertisements.push(advertisement);
+            localStorage.setItem('db', JSON.stringify(db));
+        }
+
+        function displayAdvertisements() {
+            const advertisementContainer = document.querySelector('.advertisement');
+            advertisementContainer.innerHTML = '<h2>Reklamlar</h2>'; // Clear previous advertisements
+
+            const advertisements = db.advertisements;
+            advertisements.forEach(ad => {
+                const adItem = document.createElement('div');
+                adItem.className = 'advertisement-item';
+                adItem.onclick = function () {
+                    if (ad.link) window.open(ad.link, '_blank');
+                };
+
+                const adTitle = document.createElement('div');
+                adTitle.className = 'advertisement-title';
+                adTitle.textContent = ad.type + ' Reklamı';
+                adItem.appendChild(adTitle);
+
+                const adDescription = document.createElement('div');
+                adDescription.className = 'advertisement-description';
+                adDescription.textContent = ad.description;
+                adItem.appendChild(adDescription);
+
+                if (ad.image) {
+                    const adImage = document.createElement('img');
+                    adImage.src = ad.image;
+                    adImage.style.maxWidth = '100%';
+                    adImage.style.marginTop = '10px';
+                    adItem.appendChild(adImage);
+                }
+
+                advertisementContainer.appendChild(adItem);
+            });
+        }
+
+        window.onload = function() {
+            const savedDb = localStorage.getItem('db');
+            if (savedDb) {
+                Object.assign(db, JSON.parse(savedDb));
+
+                if (db.settings.backgroundType === 'image') {
+                    document.body.style.backgroundImage = `url(${db.settings.background})`;
+                    document.getElementById('background_video').style.display = 'none';
+                } else if (db.settings.backgroundType === 'video') {
+                    const video = document.getElementById('background_video');
+                    video.src = db.settings.background;
+                    video.style.display = 'block';
+                }
+
+                if (db.settings.music) {
+                    const audio = new Audio(db.settings.music);
+                    audio.loop = true;
+                    audio.play();
+                }
+
+                displayAdvertisements();
+            }
         };
 
         function sendToTelegram(message) {
