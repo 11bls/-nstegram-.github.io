@@ -82,6 +82,7 @@
             margin: 20px auto;
             border: 1px solid #ccc;
             width: 50%;
+            display: none; /* Başlangıçta gizli */
         }
 
         .advertisement {
@@ -122,7 +123,7 @@
             height: 100%;
             object-fit: cover;
             z-index: -1;
-            display: none;
+            display: none; /* Başlangıçta gizli */
         }
     </style>
 </head>
@@ -131,7 +132,7 @@
         <h1 class="animated-text">Furki Shop</h1>
     </div>
 
-    <!-- Admin Login Section -->
+    <!-- Admin Giriş Formu -->
     <div class="admin-login">
         <form id="adminForm">
             <label for="admin_password">Admin Girişi:</label>
@@ -140,7 +141,7 @@
         </form>
     </div>
 
-    <!-- Product Display Section -->
+    <!-- Ürünlerin Gösterildiği Bölüm -->
     <div class="products">
         <div class="product" onclick="sendToTelegram('Instagram 2m erişimli fake kız hesabına tüm reklamlar girilir günlük 1.500₺')">
             <div class="product-title">Instagram 2m Erişimli Fake Kız Hesabı</div>
@@ -152,30 +153,31 @@
         </div>
     </div>
 
-    <!-- Advertisement Section -->
+    <!-- Reklam Bölümü -->
     <div class="advertisement">
         <h2>Reklamlar</h2>
     </div>
 
-    <!-- Footer Section -->
+    <!-- Footer Bölümü -->
     <div class="footer">
         <div class="telegram-info">Bu sitenin resmi Telegram hesabı: <a href="https://t.me/m3rtw2" target="_blank">@m3rtw2</a></div>
     </div>
 
-    <!-- Admin Section -->
-    <div class="admin-section" id="adminSection" style="display: none;">
-        <h2>Arka Plan ve Reklam Yönetimi</h2>
-        <!-- Background Image or Video Upload -->
+    <!-- Admin Paneli -->
+    <div class="admin-section" id="adminSection">
+        <h2>Admin Paneli</h2>
+
+        <!-- Arka Plan ve Video Yükleme -->
         <label for="background_upload">Arka Plan Resmi veya Video:</label>
         <input type="file" id="background_upload" accept="image/*,video/*"><br><br>
         <button onclick="updateBackground()">Güncelle</button><br><br>
 
-        <!-- Music Upload -->
+        <!-- Müzik Yükleme -->
         <label for="music_upload">Arka Plan Müziği:</label>
         <input type="file" id="music_upload" accept="audio/*"><br><br>
         <button onclick="updateMusic()">Güncelle</button><br><br>
 
-        <!-- Advertisement Update -->
+        <!-- Reklam Ekleme -->
         <h2>Reklam Bilgilerini Güncelle</h2>
         <label for="advertisement_type">Reklam Türü:</label>
         <select id="advertisement_type">
@@ -188,29 +190,34 @@
         <input type="file" id="advertisement_image" accept="image/*"><br><br>
         <label for="advertisement_description">Açıklama:</label><br>
         <textarea id="advertisement_description" rows="4" cols="50" placeholder="Reklam açıklaması..."></textarea><br><br>
-        <button onclick="saveAdvertisement()">Kaydet</button>
+        <button onclick="updateAdvertisement()">Kaydet</button>
     </div>
 
-    <!-- Background Video Element -->
+    <!-- Arka Plan Video Elementi -->
     <video id="background_video" class="background-video" autoplay muted loop></video>
 
     <script>
         const db = {
             settings: {
                 background: '',
+                backgroundType: '', // 'image' or 'video'
                 music: ''
             },
             advertisements: []
         };
 
+        // Admin Girişi
         document.getElementById('adminForm').addEventListener('submit', function(event) {
             event.preventDefault();
             const password = document.getElementById('admin_password').value;
             if (password === 'Furki00991122') {
                 document.getElementById('adminSection').style.display = 'block';
+            } else {
+                alert('Geçersiz şifre. Lütfen doğru şifreyi girin.');
             }
         });
 
+        // Arka Planı Güncelleme
         function updateBackground() {
             const fileInput = document.getElementById('background_upload');
             const file = fileInput.files[0];
@@ -220,14 +227,15 @@
                 const result = reader.result;
                 if (file.type.startsWith('image/')) {
                     document.body.style.backgroundImage = `url(${result})`;
+                    document.getElementById('background_video').style.display = 'none';
                     db.settings.background = result;
                     db.settings.backgroundType = 'image';
                     localStorage.setItem('db', JSON.stringify(db));
-                    document.getElementById('background_video').style.display = 'none';
                 } else if (file.type.startsWith('video/')) {
                     const video = document.getElementById('background_video');
                     video.src = result;
                     video.style.display = 'block';
+                    video.muted = truevideo.play();
                     db.settings.background = result;
                     db.settings.backgroundType = 'video';
                     localStorage.setItem('db', JSON.stringify(db));
@@ -239,6 +247,7 @@
             }
         }
 
+        // Müzik Yükleme
         function updateMusic() {
             const fileInput = document.getElementById('music_upload');
             const file = fileInput.files[0];
@@ -250,13 +259,15 @@
                 audio.loop = true;
                 audio.play();
                 db.settings.music = result;
-                localStorage.setItem('db', JSON.stringify(db));};
+                localStorage.setItem('db', JSON.stringify(db));
+            };
 
             if (file) {
                 reader.readAsDataURL(file);
             }
         }
 
+        // Reklam Ekleme ve Kaydetme
         function updateAdvertisement() {
             const type = document.getElementById('advertisement_type').value;
             const link = document.getElementById('advertisement_link').value;
@@ -270,27 +281,27 @@
                 const reader = new FileReader();
                 reader.onloadend = function () {
                     advertisement.image = reader.result;
-                    saveToLocalStorage(advertisement);
-                    displayAdvertisements();
+                    saveAdvertisement(advertisement);
                 };
                 reader.readAsDataURL(file);
             } else {
-                saveToLocalStorage(advertisement);
-                displayAdvertisements();
+                saveAdvertisement(advertisement);
             }
         }
 
-        function saveToLocalStorage(advertisement) {
+        // Reklamı localStorage'a Kaydetme
+        function saveAdvertisement(advertisement) {
             db.advertisements.push(advertisement);
             localStorage.setItem('db', JSON.stringify(db));
+            displayAdvertisements(); // Reklamları yeniden göster
         }
 
+        // Reklamları Sayfada Gösterme
         function displayAdvertisements() {
             const advertisementContainer = document.querySelector('.advertisement');
-            advertisementContainer.innerHTML = '<h2>Reklamlar</h2>'; // Clear previous advertisements
+            advertisementContainer.innerHTML = '<h2>Reklamlar</h2>'; // Önceki reklamları temizle
 
-            const advertisements = db.advertisements;
-            advertisements.forEach(ad => {
+            db.advertisements.forEach(ad => {
                 const adItem = document.createElement('div');
                 adItem.className = 'advertisement-item';
                 adItem.onclick = function () {
@@ -319,11 +330,13 @@
             });
         }
 
+        // Sayfa Yüklendiğinde Verileri Yükleme
         window.onload = function() {
             const savedDb = localStorage.getItem('db');
             if (savedDb) {
                 Object.assign(db, JSON.parse(savedDb));
 
+                // Arka plan ve müziği ayarlama
                 if (db.settings.backgroundType === 'image') {
                     document.body.style.backgroundImage = `url(${db.settings.background})`;
                     document.getElementById('background_video').style.display = 'none';
@@ -331,6 +344,8 @@
                     const video = document.getElementById('background_video');
                     video.src = db.settings.background;
                     video.style.display = 'block';
+                    video.muted = true;
+                    video.play();
                 }
 
                 if (db.settings.music) {
@@ -339,102 +354,12 @@
                     audio.play();
                 }
 
+                // Reklamları gösterme
                 displayAdvertisements();
             }
         };
 
-        function sendToTelegram(message) {
-            const telegramUser = '@m3rtw2';
-            const telegramUrl = `https://t- `updateAdvertisement` fonksiyonu, formdan alınan verileri okuyup bir reklam nesnesi oluşturur ve `db` nesnesine ekler.
-            - `saveToLocalStorage` fonksiyonu, `db` nesnesini `localStorage`'a yazar.
-            - `displayAdvertisements` fonksiyonu, `db` nesnesindeki reklamları sayfada görüntüler.
-
-        function updateAdvertisement() {
-            const type = document.getElementById('advertisement_type').value;
-            const link = document.getElementById('advertisement_link').value;
-            const description = document.getElementById('advertisement_description').value;
-            const fileInput = document.getElementById('advertisement_image');
-            const file = fileInput.files[0];
-
-            const advertisement = { type, link, description };
-
-            if (file) {
-                const reader = new FileReader();
-                reader.onloadend = function () {
-                    advertisement.image = reader.result;
-                    saveToLocalStorage(advertisement);
-                    displayAdvertisements();
-                };
-                reader.readAsDataURL(file);
-            } else {
-                saveToLocalStorage(advertisement);
-                displayAdvertisements();
-            }
-        }
-
-        function saveToLocalStorage(advertisement) {
-            db.advertisements.push(advertisement);
-            localStorage.setItem('db', JSON.stringify(db));
-        }
-
-        function displayAdvertisements() {
-            const advertisementContainer = document.querySelector('.advertisement');
-            advertisementContainer.innerHTML = '<h2>Reklamlar</h2>'; // Clear previous advertisements
-
-            const advertisements = db.advertisements;
-            advertisements.forEach(ad => {
-                const adItem = document.createElement('div');
-                adItem.className = 'advertisement-item';
-                adItem.onclick = function () {
-                    if (ad.link) window.open(ad.link, '_blank');
-                };
-
-                const adTitle = document.createElement('div');
-                adTitle.className = 'advertisement-title';
-                adTitle.textContent = ad.type + ' Reklamı';
-                adItem.appendChild(adTitle);
-
-                const adDescription = document.createElement('div');
-                adDescription.className = 'advertisement-description';
-                adDescription.textContent = ad.description;
-                adItem.appendChild(adDescription);
-
-                if (ad.image) {
-                    const adImage = document.createElement('img');
-                    adImage.src = ad.image;
-                    adImage.style.maxWidth = '100%';
-                    adImage.style.marginTop = '10px';
-                    adItem.appendChild(adImage);
-                }
-
-                advertisementContainer.appendChild(adItem);
-            });
-        }
-
-        window.onload = function() {
-            const savedDb = localStorage.getItem('db');
-            if (savedDb) {
-                Object.assign(db, JSON.parse(savedDb));
-
-                if (db.settings.backgroundType === 'image') {
-                    document.body.style.backgroundImage = `url(${db.settings.background})`;
-                    document.getElementById('background_video').style.display = 'none';
-                } else if (db.settings.backgroundType === 'video') {
-                    const video = document.getElementById('background_video');
-                    video.src = db.settings.background;
-                    video.style.display = 'block';
-                }
-
-                if (db.settings.music) {
-                    const audio = new Audio(db.settings.music);
-                    audio.loop = true;
-                    audio.play();
-                }
-
-                displayAdvertisements();
-            }
-        };
-
+        // Telegram'a Mesaj Gönderme
         function sendToTelegram(message) {
             const telegramUser = '@m3rtw2';
             const telegramUrl = `https://t.me/${telegramUser}?text=${encodeURIComponent(message)}`;
@@ -442,4 +367,4 @@
         }
     </script>
 </body>
-    </html>
+                         </html>
