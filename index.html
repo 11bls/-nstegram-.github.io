@@ -7,7 +7,8 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f8f9fa;
+            background-color: #000000;
+            color: #007bff;
             text-align: center;
             margin: 0;
             padding: 0;
@@ -18,7 +19,7 @@
 
         .header {
             background-color: #343a40;
-            color: #ffffff;
+            color: #007bff;
             padding: 20px 0;
         }
 
@@ -33,7 +34,7 @@
         }
 
         .products {
-            display: flex;
+            display: block;
             justify-content: center;
             margin-top: 50px;
         }
@@ -43,10 +44,11 @@
             border: 2px solid #dee2e6;
             border-radius: 10px;
             padding: 20px;
-            margin: 10px;
+            margin: 10px auto;
             cursor: pointer;
             transition: transform 0.3s, background-color 0.3s;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            max-width: 400px;
         }
 
         .product:hover {
@@ -56,19 +58,19 @@
 
         .product-title {
             font-size: 1.2em;
-            color: #495057;
+            color: #007bff;
         }
 
         .product-price {
             font-size: 1em;
-            color: #6c757d;
+            color: #007bff;
         }
 
         .footer {
             margin-top: 50px;
             padding: 20px;
             background-color: #343a40;
-            color: #ffffff;
+            color: #007bff;
         }
 
         .telegram-info {
@@ -94,10 +96,11 @@
             border: 2px solid #dee2e6;
             border-radius: 10px;
             padding: 20px;
-            margin: 10px;
+            margin: 10px auto;
             cursor: pointer;
             transition: transform 0.3s, background-color 0.3s;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            max-width: 400px;
         }
 
         .advertisement-item:hover {
@@ -107,12 +110,12 @@
 
         .advertisement-title {
             font-size: 1.2em;
-            color: #495057;
+            color: #007bff;
         }
 
         .advertisement-description {
             font-size: 1em;
-            color: #6c757d;
+            color: #007bff;
         }
 
         .background-video {
@@ -151,6 +154,10 @@
             <div class="product-title">Telegram +40k İfşa Kitlesi</div>
             <div class="product-price">Günlük 1.000₺</div>
         </div>
+        <div class="product" onclick="sendToTelegram('Instagram Ban Ned Aktif ürün')">
+            <div class="product-title">Instagram Ban Ned Aktif Ürün</div>
+            <div class="product-price">Fiyat Belirtilmemiş</div>
+        </div>
     </div>
 
     <!-- Reklam Bölümü -->
@@ -161,6 +168,7 @@
     <!-- Footer Bölümü -->
     <div class="footer">
         <div class="telegram-info">Bu sitenin resmi Telegram hesabı: <a href="https://t.me/m3rtw2" target="_blank">@m3rtw2</a></div>
+        <div id="visitor-count">6000</div> <!-- Ziyaretçi sayacı -->
     </div>
 
     <!-- Admin Paneli -->
@@ -200,10 +208,11 @@
         const db = {
             settings: {
                 background: '',
-                backgroundType: '', // 'image' or 'video'
+                backgroundType: '', // 'image' veya 'video'
                 music: ''
             },
-            advertisements: []
+            advertisements: [],
+            visitorCount: 6000
         };
 
         // Admin Girişi
@@ -231,11 +240,12 @@
                     db.settings.background = result;
                     db.settings.backgroundType = 'image';
                     localStorage.setItem('db', JSON.stringify(db));
-                } else if (file.type.startsWith('video/')) {
+                } else if (file.type.startsWith('video/video/')) {
                     const video = document.getElementById('background_video');
                     video.src = result;
                     video.style.display = 'block';
-                    video.muted = truevideo.play();
+                    video.muted = true;
+                    video.play();
                     db.settings.background = result;
                     db.settings.backgroundType = 'video';
                     localStorage.setItem('db', JSON.stringify(db));
@@ -330,6 +340,13 @@
             });
         }
 
+        // Ziyaretçi sayısını güncelle
+        function updateVisitorCount() {
+            db.visitorCount += 1;
+            document.getElementById('visitor-count').textContent = db.visitorCount;
+            localStorage.setItem('db', JSON.stringify(db));
+        }
+
         // Sayfa Yüklendiğinde Verileri Yükleme
         window.onload = function() {
             const savedDb = localStorage.getItem('db');
@@ -357,6 +374,9 @@
                 // Reklamları gösterme
                 displayAdvertisements();
             }
+
+            // Ziyaretçi sayısını güncelleme
+            updateVisitorCount();
         };
 
         // Telegram'a Mesaj Gönderme
@@ -367,4 +387,4 @@
         }
     </script>
 </body>
-                         </html>
+            </html>
