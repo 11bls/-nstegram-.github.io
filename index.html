@@ -3,388 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Furki Shop</title>
+    <title>Telegram Yönlendirme</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #000000;
-            color: #007bff;
-            text-align: center;
             margin: 0;
             padding: 0;
-            transition: background-image 0.3s ease, background-video 0.3s ease;
-            background-size: cover;
-            background-position: center;
-        }
-
-        .header {
-            background-color: #343a40;
-            color: #007bff;
-            padding: 20px 0;
-        }
-
-        .animated-text {
-            font-size: 2.5em;
-            animation: fadeIn 2s infinite alternate;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .products {
-            display: block;
+            display: flex;
             justify-content: center;
-            margin-top: 50px;
+            align-items: center;
+            height: 100vh;
+            background-color: #000; /* Siyah arka plan */
         }
 
-        .product {
-            background-color: #ffffff;
-            border: 2px solid #dee2e6;
+        .container {
+            text-align: center;
+            color: white;
+        }
+
+        .button {
+            padding: 20px 40px;
+            background-color: #800080; /* Mor arka plan */
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            text-decoration: none;
             border-radius: 10px;
-            padding: 20px;
-            margin: 10px auto;
-            cursor: pointer;
-            transition: transform 0.3s, background-color 0.3s;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            max-width: 400px;
         }
 
-        .product:hover {
-            background-color: #e9ecef;
-            transform: translateY(-10px);
-        }
-
-        .product-title {
-            font-size: 1.2em;
-            color: #007bff;
-        }
-
-        .product-price {
-            font-size: 1em;
-            color: #007bff;
-        }
-
-        .footer {
-            margin-top: 50px;
-            padding: 20px;
-            background-color: #343a40;
-            color: #007bff;
-        }
-
-        .telegram-info {
-            font-size: 1em;
-            color: #007bff;
-        }
-
-        .admin-section {
-            background-color: #ffffff;
-            padding: 20px;
-            margin: 20px auto;
-            border: 1px solid #ccc;
-            width: 50%;
-            display: none; /* Başlangıçta gizli */
-        }
-
-        .advertisement {
-            margin-top: 50px;
-        }
-
-        .advertisement-item {
-            background-color: #ffffff;
-            border: 2px solid #dee2e6;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 10px auto;
-            cursor: pointer;
-            transition: transform 0.3s, background-color 0.3s;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            max-width: 400px;
-        }
-
-        .advertisement-item:hover {
-            background-color: #e9ecef;
-            transform: translateY(-10px);
-        }
-
-        .advertisement-title {
-            font-size: 1.2em;
-            color: #007bff;
-        }
-
-        .advertisement-description {
-            font-size: 1em;
-            color: #007bff;
-        }
-
-        .background-video {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: -1;
-            display: none; /* Başlangıçta gizli */
+        .button:hover {
+            background-color: #4b0082; /* Hover için daha koyu mor */
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1 class="animated-text">Furki Shop</h1>
+    <div class="container">
+        <a href="https://t.me/m3rtw2" class="button">TÜM REKLAMLAR GEÇİLİR</a>
     </div>
-
-    <!-- Admin Giriş Formu -->
-    <div class="admin-login">
-        <form id="adminForm">
-            <label for="admin_password">Admin Girişi:</label>
-            <input type="password" id="admin_password" placeholder="Şifre">
-            <button type="submit">Giriş</button>
-        </form>
-    </div>
-
-    <!-- Ürünlerin Gösterildiği Bölüm -->
-    <div class="products">
-        <div class="product" onclick="sendToTelegram('Instagram 2m erişimli fake kız hesabına tüm reklamlar girilir günlük 1.500₺')">
-            <div class="product-title">Instagram 2m Erişimli Fake Kız Hesabı</div>
-            <div class="product-price">Günlük 1.500₺</div>
-        </div>
-        <div class="product" onclick="sendToTelegram('Telegram +40k ifşa kitlesine tüm reklamlar gidilir günlük 1.000₺')">
-            <div class="product-title">Telegram +40k İfşa Kitlesi</div>
-            <div class="product-price">Günlük 1.000₺</div>
-        </div>
-        <div class="product" onclick="sendToTelegram('Instagram Ban Ned Aktif ürün')">
-            <div class="product-title">Instagram Ban Ned Aktif Ürün</div>
-            <div class="product-price">Fiyat Belirtilmemiş</div>
-        </div>
-    </div>
-
-    <!-- Reklam Bölümü -->
-    <div class="advertisement">
-        <h2>Reklamlar</h2>
-    </div>
-
-    <!-- Footer Bölümü -->
-    <div class="footer">
-        <div class="telegram-info">Bu sitenin resmi Telegram hesabı: <a href="https://t.me/m3rtw2" target="_blank">@m3rtw2</a></div>
-        <div id="visitor-count">6000</div> <!-- Ziyaretçi sayacı -->
-    </div>
-
-    <!-- Admin Paneli -->
-    <div class="admin-section" id="adminSection">
-        <h2>Admin Paneli</h2>
-
-        <!-- Arka Plan ve Video Yükleme -->
-        <label for="background_upload">Arka Plan Resmi veya Video:</label>
-        <input type="file" id="background_upload" accept="image/*,video/*"><br><br>
-        <button onclick="updateBackground()">Güncelle</button><br><br>
-
-        <!-- Müzik Yükleme -->
-        <label for="music_upload">Arka Plan Müziği:</label>
-        <input type="file" id="music_upload" accept="audio/*"><br><br>
-        <button onclick="updateMusic()">Güncelle</button><br><br>
-
-        <!-- Reklam Ekleme -->
-        <h2>Reklam Bilgilerini Güncelle</h2>
-        <label for="advertisement_type">Reklam Türü:</label>
-        <select id="advertisement_type">
-            <option value="Telegram Kanalı">Telegram Kanalı</option>
-            <option value="Ürün">Ürün</option>
-        </select><br><br>
-        <label for="advertisement_link">Reklam Linki:</label>
-        <input type="text" id="advertisement_link" placeholder="https://t.me/kanaladi"><br><br>
-        <label for="advertisement_image">Ürün Fotoğrafı:</label>
-        <input type="file" id="advertisement_image" accept="image/*"><br><br>
-        <label for="advertisement_description">Açıklama:</label><br>
-        <textarea id="advertisement_description" rows="4" cols="50" placeholder="Reklam açıklaması..."></textarea><br><br>
-        <button onclick="updateAdvertisement()">Kaydet</button>
-    </div>
-
-    <!-- Arka Plan Video Elementi -->
-    <video id="background_video" class="background-video" autoplay muted loop></video>
-
-    <script>
-        const db = {
-            settings: {
-                background: '',
-                backgroundType: '', // 'image' veya 'video'
-                music: ''
-            },
-            advertisements: [],
-            visitorCount: 6000
-        };
-
-        // Admin Girişi
-        document.getElementById('adminForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const password = document.getElementById('admin_password').value;
-            if (password === 'Furki00991122') {
-                document.getElementById('adminSection').style.display = 'block';
-            } else {
-                alert('Geçersiz şifre. Lütfen doğru şifreyi girin.');
-            }
-        });
-
-        // Arka Planı Güncelleme
-        function updateBackground() {
-            const fileInput = document.getElementById('background_upload');
-            const file = fileInput.files[0];
-            const reader = new FileReader();
-
-            reader.onloadend = function () {
-                const result = reader.result;
-                if (file.type.startsWith('image/')) {
-                    document.body.style.backgroundImage = `url(${result})`;
-                    document.getElementById('background_video').style.display = 'none';
-                    db.settings.background = result;
-                    db.settings.backgroundType = 'image';
-                    localStorage.setItem('db', JSON.stringify(db));
-                } else if (file.type.startsWith('video/video/')) {
-                    const video = document.getElementById('background_video');
-                    video.src = result;
-                    video.style.display = 'block';
-                    video.muted = true;
-                    video.play();
-                    db.settings.background = result;
-                    db.settings.backgroundType = 'video';
-                    localStorage.setItem('db', JSON.stringify(db));
-                }
-            };
-
-            if (file) {
-                reader.readAsDataURL(file);
-            }
-        }
-
-        // Müzik Yükleme
-        function updateMusic() {
-            const fileInput = document.getElementById('music_upload');
-            const file = fileInput.files[0];
-            const reader = new FileReader();
-
-            reader.onloadend = function () {
-                const result = reader.result;
-                const audio = new Audio(result);
-                audio.loop = true;
-                audio.play();
-                db.settings.music = result;
-                localStorage.setItem('db', JSON.stringify(db));
-            };
-
-            if (file) {
-                reader.readAsDataURL(file);
-            }
-        }
-
-        // Reklam Ekleme ve Kaydetme
-        function updateAdvertisement() {
-            const type = document.getElementById('advertisement_type').value;
-            const link = document.getElementById('advertisement_link').value;
-            const description = document.getElementById('advertisement_description').value;
-            const fileInput = document.getElementById('advertisement_image');
-            const file = fileInput.files[0];
-
-            const advertisement = { type, link, description };
-
-            if (file) {
-                const reader = new FileReader();
-                reader.onloadend = function () {
-                    advertisement.image = reader.result;
-                    saveAdvertisement(advertisement);
-                };
-                reader.readAsDataURL(file);
-            } else {
-                saveAdvertisement(advertisement);
-            }
-        }
-
-        // Reklamı localStorage'a Kaydetme
-        function saveAdvertisement(advertisement) {
-            db.advertisements.push(advertisement);
-            localStorage.setItem('db', JSON.stringify(db));
-            displayAdvertisements(); // Reklamları yeniden göster
-        }
-
-        // Reklamları Sayfada Gösterme
-        function displayAdvertisements() {
-            const advertisementContainer = document.querySelector('.advertisement');
-            advertisementContainer.innerHTML = '<h2>Reklamlar</h2>'; // Önceki reklamları temizle
-
-            db.advertisements.forEach(ad => {
-                const adItem = document.createElement('div');
-                adItem.className = 'advertisement-item';
-                adItem.onclick = function () {
-                    if (ad.link) window.open(ad.link, '_blank');
-                };
-
-                const adTitle = document.createElement('div');
-                adTitle.className = 'advertisement-title';
-                adTitle.textContent = ad.type + ' Reklamı';
-                adItem.appendChild(adTitle);
-
-                const adDescription = document.createElement('div');
-                adDescription.className = 'advertisement-description';
-                adDescription.textContent = ad.description;
-                adItem.appendChild(adDescription);
-
-                if (ad.image) {
-                    const adImage = document.createElement('img');
-                    adImage.src = ad.image;
-                    adImage.style.maxWidth = '100%';
-                    adImage.style.marginTop = '10px';
-                    adItem.appendChild(adImage);
-                }
-
-                advertisementContainer.appendChild(adItem);
-            });
-        }
-
-        // Ziyaretçi sayısını güncelle
-        function updateVisitorCount() {
-            db.visitorCount += 1;
-            document.getElementById('visitor-count').textContent = db.visitorCount;
-            localStorage.setItem('db', JSON.stringify(db));
-        }
-
-        // Sayfa Yüklendiğinde Verileri Yükleme
-        window.onload = function() {
-            const savedDb = localStorage.getItem('db');
-            if (savedDb) {
-                Object.assign(db, JSON.parse(savedDb));
-
-                // Arka plan ve müziği ayarlama
-                if (db.settings.backgroundType === 'image') {
-                    document.body.style.backgroundImage = `url(${db.settings.background})`;
-                    document.getElementById('background_video').style.display = 'none';
-                } else if (db.settings.backgroundType === 'video') {
-                    const video = document.getElementById('background_video');
-                    video.src = db.settings.background;
-                    video.style.display = 'block';
-                    video.muted = true;
-                    video.play();
-                }
-
-                if (db.settings.music) {
-                    const audio = new Audio(db.settings.music);
-                    audio.loop = true;
-                    audio.play();
-                }
-
-                // Reklamları gösterme
-                displayAdvertisements();
-            }
-
-            // Ziyaretçi sayısını güncelleme
-            updateVisitorCount();
-        };
-
-        // Telegram'a Mesaj Gönderme
-        function sendToTelegram(message) {
-            const telegramUser = '@m3rtw2';
-            const telegramUrl = `https://t.me/${telegramUser}?text=${encodeURIComponent(message)}`;
-            window.open(telegramUrl, '_blank');
-        }
-    </script>
 </body>
-            </html>
+</html>
