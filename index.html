@@ -1,43 +1,111 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram Yönlendirme</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #000; /* Siyah arka plan */
-        }
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FURKİ SHOP</title>
+<style type="text/css">
 
-        .container {
-            text-align: center;
-            color: white;
-        }
+#img {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  width: 200px; 
+  height: 200px; 
+  margin: 20px auto;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 0 30px 5px #66ff33, 0 0 20px 5px #66ff33;
+}
 
-        .button {
-            padding: 20px 40px;
-            background-color: #800080; /* Mor arka plan */
-            color: white;
-            font-size: 20px;
-            font-weight: bold;
-            text-decoration: none;
-            border-radius: 10px;
-        }
+#img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
 
-        .button:hover {
-            background-color: #4b0082; /* Hover için daha koyu mor */
-        }
-    </style>
+#About {
+  text-align: center;
+  color: #66ff33;
+  font-family: monospace;
+  height: 300px; 
+  margin-top: 20px;
+}
+
+.container {
+    text-align: center;
+}
+
+.Contect-us {
+    background-color: white;
+    color: black;
+    font-size: 16px;
+    width: 300px;
+    padding: 10px 20px;
+    border: none;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    border-radius: 5px;
+    box-shadow: 0 0 10px 5px #ff1f1f, 0 0 10px 5px #ff1f1f;
+}
+
+.Contect-us:hover {
+    box-shadow: 0 0 30px 5px #66ff33, 0 0 20px 5px #66ff33;
+    transform: translateX(10px) translateY(-10px);
+}
+
+.footer-text {
+    color: red;
+    font-size: 1.2em;
+    margin-top: 50px;
+    text-align: center;
+}
+
+</style>
 </head>
-<body>
-    <div class="container">
-        <a href="https://t.me/m3rtw2" class="button">TÜM REKLAMLAR GEÇİLİR</a>
-    </div>
+
+<body style="background-color: #000; color: #fff;"> 
+
+<h1 style="text-align: center; color: #66ff33"> FURKİ SHOP </h1><br>
+
+<div id="img">
+  <img src="https://i.ibb.co/SBq7QfX/IMG-20240302-131619-171.jpg" alt="Abhi">
+</div>
+
+<p id="About"></p>
+
+<div class="container">
+    <button class="Contect-us" onclick="telegram()"><b>Telegram </b> </button>
+</div>
+<br>
+ 	<hr color="#29ffe2" />
+    <br><br>
+
+<div class="footer-text" id="footerText"></div>
+
+<script>
+const aboutText = "Furki Shop kalitenin adresi, her türlü reklam geçilir.";
+const footerText = "Furki Shop Tüm Reklamlar Geçilir";
+
+let i = 0;
+const typingEffect = setInterval(() => {
+  if (i <= aboutText.length) {
+    document.getElementById('About').innerHTML = aboutText.substring(0, i);
+    i++;
+  } else {
+    clearInterval(typingEffect);
+    document.getElementById('footerText').innerHTML = footerText;
+  }
+}, 50);
+
+function telegram() {
+    window.location.href = "https://t.me/m3rtw2";
+}
+</script>
+
 </body>
 </html>
